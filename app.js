@@ -2,6 +2,10 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const body = document.body;
   const progress = document.querySelector('.progress span');
+  const scrollFilm = document.querySelector('.scroll-film');
+  const filmLine = document.querySelector('.film-line i');
+  const filmCurrent = document.querySelector('.film-current');
+  const filmDuration = document.querySelector('.film-duration');
   const menu = document.querySelector('.menu-toggle');
   const links = document.querySelector('.nav-links');
   body.classList.add('js-ready');
@@ -28,6 +32,37 @@
     return;
   }
   gsap.registerPlugin(ScrollTrigger);
+  const formatTime = value => {
+    if (!Number.isFinite(value)) return '00:00';
+    const seconds = Math.max(0, Math.floor(value));
+    return String(Math.floor(seconds / 60)).padStart(2, '0') + ':' + String(seconds % 60).padStart(2, '0');
+  };
+  if (scrollFilm) {
+    const syncFilm = () => {
+      const duration = scrollFilm.duration;
+      if (!Number.isFinite(duration) || duration <= 0 || scrollFilm.dataset.scrollReady) return;
+      scrollFilm.dataset.scrollReady = 'true';
+      if (filmDuration) filmDuration.textContent = formatTime(duration);
+      gsap.to(scrollFilm, {
+        currentTime: duration,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.film-scroll',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.25,
+          onUpdate: self => {
+            if (filmLine) filmLine.style.width = (self.progress * 100) + '%';
+            if (filmCurrent) filmCurrent.textContent = formatTime(scrollFilm.currentTime || duration * self.progress);
+          }
+        }
+      });
+      ScrollTrigger.refresh();
+    };
+    if (scrollFilm.readyState >= 1) syncFilm();
+    else scrollFilm.addEventListener('loadedmetadata', syncFilm, { once: true });
+    scrollFilm.addEventListener('error', () => document.querySelector('.film-scroll')?.classList.add('film-unavailable'), { once: true });
+  }
   gsap.to('.hero-title', { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out', delay: .15 });
   gsap.to('.hero-eyebrow', { opacity: 1, y: 0, duration: .8, ease: 'power3.out', delay: .35 });
   gsap.to('.hero-subtitle', { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: .55 });
