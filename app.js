@@ -111,7 +111,7 @@
   gsap.to('.hero-subtitle', { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: .55 });
 
   const hero = document.querySelector('.hero');
-  gsap.to('.hero-image', {
+  gsap.to('.hero-image, .hero-film', {
     scale: 1.16, yPercent: 7, ease: 'none',
     scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 1.25 }
   });
