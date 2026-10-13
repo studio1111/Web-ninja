@@ -25,3 +25,12 @@
 .film-line i{position:absolute;inset:0 auto 0 0;width:0;background:#e4e6d9}
 @media(max-width:560px){.film-scroll{height:220vh}.film-copy{left:7vw;right:7vw}.film-copy h2{font-size:64px}.film-counter{left:7vw;right:7vw;bottom:24px}.mask-photo{height:390px;width:min(84%,300px)}.craft-photo{height:360px;width:min(72%,260px)}.card-art{height:260px}}
 @media(prefers-reduced-motion:reduce){.film-scroll{height:auto}.film-sticky{position:relative;height:75svh}}
+
+
+/* Graceful remote-media fallbacks */
+.hero-film-unavailable .hero-film{display:none}
+.hero-film-unavailable .hero-image{background-image:linear-gradient(90deg,rgba(10,15,14,.7),rgba(13,18,17,.18) 50%,rgba(9,14,13,.55)),linear-gradient(0deg,#111514 0%,transparent 45%,rgba(10,15,14,.25)),url("https://images.unsplash.com/photo-1638231671707-9684a26f7464?auto=format&fit=crop&w=2200&q=85");background-size:cover;background-position:center}
+.film-unavailable .film-hint{font-size:0}
+.film-unavailable .film-hint::after{content:"FILM PREVIEW UNAVAILABLE · CONTINUE SCROLLING";font-size:9px;letter-spacing:.13em}
+.film-unavailable .film-line i{transition:width .12s linear}
+@media(prefers-reduced-motion:reduce){.hero-film{display:none}.hero-film-unavailable .hero-image{background-image:linear-gradient(90deg,rgba(10,15,14,.6),rgba(13,18,17,.2)),url("https://images.unsplash.com/photo-1638231671707-9684a26f7464?auto=format&fit=crop&w=1800&q=85");background-size:cover;background-position:center}}
