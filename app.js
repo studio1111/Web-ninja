@@ -15,10 +15,21 @@
     menu.setAttribute('aria-expanded', String(open));
     links?.classList.toggle('open', open);
   });
-  links?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
-    links.classList.remove('open');
+  const closeMenu = () => {
+    links?.classList.remove('open');
     menu?.setAttribute('aria-expanded', 'false');
-  }));
+  };
+  links?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menu?.getAttribute('aria-expanded') === 'true') {
+      closeMenu();
+      menu?.focus();
+    }
+  });
+  document.addEventListener('click', event => {
+    if (menu?.getAttribute('aria-expanded') === 'true' &&
+        !menu.contains(event.target) && !links?.contains(event.target)) closeMenu();
+  });
 
   const updateProgress = () => {
     const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -29,11 +40,32 @@
 
   // Remote video can fail on restricted networks; retain the poster and readable overlay.
   document.querySelectorAll('video').forEach(video => {
-    video.addEventListener('error', () => {
+    const markUnavailable = () => {
       video.classList.add('media-unavailable');
       if (video.classList.contains('hero-film')) document.querySelector('.hero')?.classList.add('hero-film-unavailable');
-    }, { once: true });
+      if (video.classList.contains('scroll-film')) document.querySelector('.film-scroll')?.classList.add('film-unavailable');
+    };
+    video.addEventListener('error', markUnavailable, { once: true });
+    video.addEventListener('abort', markUnavailable, { once: true });
   });
+
+  // Keep the scroll indicator useful even when the animation library is blocked.
+  if (scrollFilm) {
+    const filmSection = document.querySelector('.film-scroll');
+    const updateFilmFallback = () => {
+      if (!filmSection || scrollFilm.dataset.scrollReady === 'true') return;
+      const rect = filmSection.getBoundingClientRect();
+      const travel = Math.max(1, filmSection.offsetHeight - window.innerHeight);
+      const progressValue = Math.min(1, Math.max(0, -rect.top / travel));
+      if (filmLine) filmLine.style.width = (progressValue * 100) + '%';
+      if (filmCurrent && (!Number.isFinite(scrollFilm.duration) || scrollFilm.duration <= 0)) {
+        filmCurrent.textContent = 'SCROLL';
+      }
+    };
+    window.addEventListener('scroll', updateFilmFallback, { passive: true });
+    window.addEventListener('resize', updateFilmFallback, { passive: true });
+    updateFilmFallback();
+  }
 
 
   if (reduceMotion || !window.gsap || !window.ScrollTrigger) {
@@ -61,7 +93,7 @@
           trigger: '.film-scroll',
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 0.12,
+          scrub: 0.22,
           onUpdate: self => {
             if (filmLine) filmLine.style.width = (self.progress * 100) + '%';
             if (filmCurrent) filmCurrent.textContent = formatTime(scrollFilm.currentTime || duration * self.progress);
@@ -79,7 +111,7 @@
   gsap.to('.hero-subtitle', { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: .55 });
 
   const hero = document.querySelector('.hero');
-  gsap.to('.hero-image', {
+  gsap.to('.hero-image, .hero-film', {
     scale: 1.16, yPercent: 7, ease: 'none',
     scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 1.25 }
   });
