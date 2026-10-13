@@ -49,6 +49,14 @@
     video.addEventListener('abort', markUnavailable, { once: true });
   });
 
+  // Swap failed remote photographs for the built-in vector artwork instead of leaving empty cards.
+  document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => {
+      const visual = img.closest('.stage-one, .craft-object, .card-art');
+      visual?.classList.add('photo-unavailable');
+    }, { once: true });
+  });
+
   // Keep the scroll indicator useful even when the animation library is blocked.
   if (scrollFilm) {
     const filmSection = document.querySelector('.film-scroll');
