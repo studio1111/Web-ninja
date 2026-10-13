@@ -22,7 +22,7 @@
 
   const updateProgress = () => {
     const max = document.documentElement.scrollHeight - window.innerHeight;
-    progress.style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
+    if (progress) progress.style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
   };
   window.addEventListener('scroll', updateProgress, { passive: true });
   updateProgress();
@@ -32,12 +32,21 @@
     return;
   }
   gsap.registerPlugin(ScrollTrigger);
+
+  // Remote video can fail on restricted networks; retain the poster and readable overlay.
+  document.querySelectorAll('video').forEach(video => {
+    video.addEventListener('error', () => {
+      video.classList.add('media-unavailable');
+      if (video.classList.contains('hero-film')) document.querySelector('.hero')?.classList.add('hero-film-unavailable');
+    }, { once: true });
+  });
   const formatTime = value => {
     if (!Number.isFinite(value)) return '00:00';
     const seconds = Math.max(0, Math.floor(value));
     return String(Math.floor(seconds / 60)).padStart(2, '0') + ':' + String(seconds % 60).padStart(2, '0');
   };
   if (scrollFilm) {
+    const filmSection = document.querySelector('.film-scroll');
     const syncFilm = () => {
       const duration = scrollFilm.duration;
       if (!Number.isFinite(duration) || duration <= 0 || scrollFilm.dataset.scrollReady) return;
@@ -50,7 +59,7 @@
           trigger: '.film-scroll',
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 0.25,
+          scrub: 0.12,
           onUpdate: self => {
             if (filmLine) filmLine.style.width = (self.progress * 100) + '%';
             if (filmCurrent) filmCurrent.textContent = formatTime(scrollFilm.currentTime || duration * self.progress);
@@ -121,4 +130,5 @@
   // Remove the pre-animation guard only after GSAP has taken control.
   requestAnimationFrame(() => body.classList.remove('js-ready'));
   window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+  if (document.fonts?.ready) document.fonts.ready.then(() => ScrollTrigger.refresh()).catch(() => {});
 })();
