@@ -27,7 +27,7 @@ for (const [label, ok] of [
   ['reduced-motion CSS fallback exists', /prefers-reduced-motion:\s*reduce/.test(css)],
   ['keyboard Escape support exists', /event\.key\s*===\s*['"]Escape['"]/.test(js)],
   ['remote-media fallback exists', /hero-film-unavailable/.test(js) && /film-unavailable/.test(js)],
-  ['failed photos reveal built-in artwork', /photo-unavailable/.test(js) && /\\.stage-one\\.photo-unavailable \\.mask-photo/.test(css) && /\\.card-art\\.photo-unavailable svg/.test(css)],
+  ['failed photos reveal built-in artwork', /photo-unavailable/.test(js) && /\.stage-one\.photo-unavailable \.mask-photo/.test(css) && /\.card-art\.photo-unavailable svg/.test(css)],
   ['scroll progress indicator is updated', /progress\.style\.width/.test(js)],
 ]) {
   if (!ok) failures.push(`Validation failed: ${label}`);
