@@ -27,12 +27,6 @@
   window.addEventListener('scroll', updateProgress, { passive: true });
   updateProgress();
 
-  if (reduceMotion || !window.gsap || !window.ScrollTrigger) {
-    body.classList.remove('js-ready');
-    return;
-  }
-  gsap.registerPlugin(ScrollTrigger);
-
   // Remote video can fail on restricted networks; retain the poster and readable overlay.
   document.querySelectorAll('video').forEach(video => {
     video.addEventListener('error', () => {
@@ -40,6 +34,14 @@
       if (video.classList.contains('hero-film')) document.querySelector('.hero')?.classList.add('hero-film-unavailable');
     }, { once: true });
   });
+
+
+  if (reduceMotion || !window.gsap || !window.ScrollTrigger) {
+    body.classList.remove('js-ready');
+    return;
+  }
+  gsap.registerPlugin(ScrollTrigger);
+
   const formatTime = value => {
     if (!Number.isFinite(value)) return '00:00';
     const seconds = Math.max(0, Math.floor(value));
