@@ -22,6 +22,12 @@ jobs:
         uses: actions/checkout@v4
       - name: Configure Pages
         uses: actions/configure-pages@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run site validation
+        run: node scripts/validate-site.mjs
       - name: Validate required files
         run: |
           test -s index.html
