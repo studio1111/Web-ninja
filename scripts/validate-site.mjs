@@ -29,6 +29,7 @@ for (const [label, ok] of [
   ['remote-media fallback exists', /hero-film-unavailable/.test(js) && /film-unavailable/.test(js)],
   ['failed photos reveal built-in artwork', /photo-unavailable/.test(js) && /\.stage-one\.photo-unavailable \.mask-photo/.test(css) && /\.card-art\.photo-unavailable svg/.test(css)],
   ['scroll progress indicator is updated', /progress\.style\.width/.test(js)],
+  ['hero fallback uses mask photography, not unrelated scenery', /photo-1638231671707-9684a26f7464/.test(css) && !/photo-1518837695005-2083093ee35b/.test(css)],
   ['chapter navigation tracks the active section', /aria-current/.test(js) && /IntersectionObserver/.test(js)],
   ['cinematic reveal has reduced-motion fallback', /reveal-pending/.test(js) && /reveal-pending/.test(css) && /prefers-reduced-motion:\s*reduce/.test(css)],
 ]) {
