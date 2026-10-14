@@ -1,15 +1,12 @@
 # KAGE
 
-A cinematic, responsive showcase for Japanese mask-inspired art, craft, and the unseen self.
+A cinematic Japanese mask showcase.
 
-## Preview
-Open `index.html` in a browser or enable GitHub Pages from the repository's main branch.
+## Source layout
+- `src/App.jsx`: React experience and scroll-driven interactions
+- `src/styles.css`: responsive visual design and motion rules
+- `index.html`: Vite entry point
 
-## Features
-- Full-screen cinematic hero and scroll-controlled film section
-- Origins, craftsmanship, collection, and private-viewing sections
-- Responsive navigation and mobile menu
-- Scroll progress, subtle reveal motion, and reduced-motion support
-- Responsive layouts for mobile, tablet, and desktop
-
-Images are remotely loaded and therefore require an internet connection.
+## Development
+Run `npm install`, then `npm run dev`.
+The source uses remote image URLs as temporary image replacements because the original PNG assets from the supplied archive were not yet uploaded into this repository.
