@@ -76,6 +76,39 @@
   }
 
 
+  // Give each chapter a subtle, continuous camera drift and keep the current chapter legible in navigation.
+  const chapterLinks = [...document.querySelectorAll('.nav-links a[href^="#"]')];
+  const chapters = chapterLinks
+    .map(link => ({ link, section: document.querySelector(link.getAttribute('href')) }))
+    .filter(item => item.section);
+  if ('IntersectionObserver' in window && chapters.length) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        chapters.forEach(({ link, section }) => {
+          const active = section === entry.target;
+          if (active) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        });
+      });
+    }, { rootMargin: '-28% 0px -58% 0px', threshold: 0 });
+    chapters.forEach(({ section }) => observer.observe(section));
+  }
+
+  // If GSAP is blocked, native CSS and the browser still provide a graceful experience.
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    const revealTargets = document.querySelectorAll('.film-copy, .collection-heading, .collection-foot, .discover-note');
+    revealTargets.forEach(target => target.classList.add('reveal-pending'));
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-revealed');
+        revealObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.12 });
+    revealTargets.forEach(target => revealObserver.observe(target));
+  }
+
   if (reduceMotion || !window.gsap || !window.ScrollTrigger) {
     body.classList.remove('js-ready');
     return;
