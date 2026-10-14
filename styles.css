@@ -46,3 +46,20 @@
 .card-art.photo-unavailable .card-photo{display:none}
 .card-art.photo-unavailable svg{display:block}
 .card-art.photo-unavailable{background:radial-gradient(ellipse at center,rgba(190,198,180,.08),transparent 70%)}
+
+
+/* Cinematic polish: chapter state, restrained reveals, and tactile image depth. */
+.nav-links a[aria-current="location"]{color:#f0f0e5}
+.nav-links a[aria-current="location"]:not(.nav-cta){text-decoration:underline;text-decoration-color:#9eaa99;text-underline-offset:7px}
+.reveal-pending{opacity:0;transform:translateY(22px);filter:blur(3px);transition:opacity .9s var(--ease),transform .9s var(--ease),filter .9s var(--ease)}
+.reveal-pending.is-revealed{opacity:1;transform:translateY(0);filter:blur(0)}
+.story-copy,.mask-stage,.craft-content,.craft-object,.collection-heading,.mask-card,.discover-section h2,.discover-button{will-change:transform,opacity}
+.mask-photo,.craft-photo{transition:transform 1.2s var(--ease),filter .8s var(--ease);will-change:transform}
+.stage-one:hover .mask-photo{transform:rotate(0deg) scale(1.035);filter:saturate(.8) brightness(.82)}
+.craft-object:hover .craft-photo{transform:rotate(0deg) scale(1.025);filter:saturate(.72) contrast(1.08)}
+.card-art:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(135deg,rgba(220,225,210,.07),transparent 38%,rgba(0,0,0,.24));opacity:.75;transition:opacity .6s}
+.mask-card:hover .card-art:after{opacity:.35}
+.film-sticky:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;border:1px solid rgba(230,233,219,.06);box-shadow:inset 0 0 130px rgba(0,0,0,.2)}
+.film-copy,.film-counter{z-index:2}
+@media(max-width:850px){.nav-links a[aria-current="location"]{color:#f0f0e5}.reveal-pending{transform:translateY(14px)}}
+@media(prefers-reduced-motion:reduce){.reveal-pending,.reveal-pending.is-revealed{opacity:1;transform:none;filter:none;transition:none}.mask-photo,.craft-photo{transition:none;will-change:auto}.story-copy,.mask-stage,.craft-content,.craft-object,.collection-heading,.mask-card,.discover-section h2,.discover-button{will-change:auto}}
