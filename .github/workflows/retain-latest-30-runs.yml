@@ -1,0 +1,31 @@
+name: Retain latest 30 workflow runs
+
+on:
+  schedule:
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: workflow-run-retention
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Keep the latest 30 workflow runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh run list --repo "$GH_REPO" --limit 1000 --json databaseId --jq '.[30:][] | .databaseId' |
+          while IFS= read -r run_id; do
+            [ -n "$run_id" ] || continue
+            gh run delete "$run_id" --repo "$GH_REPO"
+          done
