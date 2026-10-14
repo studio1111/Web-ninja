@@ -1,31 +1,28 @@
 name: Retain latest 30 workflow runs
-
 on:
   schedule:
     - cron: "23 4 * * 1"
   workflow_dispatch:
-
 permissions:
   actions: write
   contents: read
-
 concurrency:
-  group: workflow-run-retention
+  group: retain-latest-workflow-runs
   cancel-in-progress: false
-
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Keep the latest 30 workflow runs
+      - name: Delete workflow runs older than the latest 30
         env:
           GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        shell: bash
+          REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          gh run list --repo "$GH_REPO" --limit 1000 --json databaseId --jq '.[30:][] | .databaseId' |
-          while IFS= read -r run_id; do
-            [ -n "$run_id" ] || continue
-            gh run delete "$run_id" --repo "$GH_REPO"
-          done
+          workflows=$(gh api "repos/$REPO/actions/workflows" --paginate --jq '.workflows[].id')
+          while read -r workflow_id; do
+            [ -n "$workflow_id" ] || continue
+            gh api "repos/$REPO/actions/workflows/$workflow_id/runs?per_page=100" --paginate --jq '.workflow_runs[].id' | tail -n +31 | while read -r run_id; do
+              [ -n "$run_id" ] && gh api --method DELETE "repos/$REPO/actions/runs/$run_id" >/dev/null || true
+            done
+          done <<< "$workflows"
