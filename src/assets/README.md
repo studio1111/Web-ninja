@@ -1,2 +1,0 @@
-# KAGE image assets
-The archive contains the original generated image files (hero.png, mask-quiet.png, mask-hannya.png, mask-signature.png). Those binary files have not yet been transferred into this repository; the current React source temporarily uses remote image URLs. This directory documents that outstanding asset transfer.
